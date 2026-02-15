@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f1a24;
+      --paper: #f7f2e8;
+      --accent: #d97706;
+      --shadow: 0 10px 30px rgba(15, 26, 36, 0.12);
+      --stroke: rgba(15, 26, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      background: radial-gradient(1000px 500px at 20% 15%, #ffe7c2 0%, rgba(255, 231, 194, 0) 55%),
+                  radial-gradient(900px 500px at 90% 5%, #c7f3f2 0%, rgba(199, 243, 242, 0) 55%),
+                  var(--paper);
+      color: var(--ink);
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      width: min(460px, 92vw);
+      margin: 70px auto;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      text-align: center;
+      margin: 0 0 20px 0;
+      color: #6b7280;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px 0;
+      color: #374151;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      border: 1px solid var(--stroke);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--ink);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .meta {
+      margin-top: 14px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .meta a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      border: 1px solid var(--stroke);
+      background: #fff;
+      text-align: center;
+    }
+
+    .alert.error {
+      border-color: rgba(217, 119, 6, 0.4);
+      background: rgba(217, 119, 6, 0.1);
+      color: #b45309;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Create Account</h2>
+  <p>Get your own member login.</p>
+
+  <form th:action="@{/user/register}" method="post">
+    <label for="name">Full name</label>
+    <input id="name" name="name" type="text" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" required />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required />
+
+    <button type="submit">Create Account</button>
+  </form>
+
+  <div class="alert error" th:if="${error}" th:text="${error}"></div>
+
+  <div class="meta">
+    Already have an account? <a th:href="@{/user/login}">Log in</a>
+  </div>
+</div>
+
+</body>
+</html>

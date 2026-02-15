@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Book Catalog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f1a24;
+      --paper: #f7f2e8;
+      --accent: #d97706;
+      --accent-2: #0ea5a1;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --shadow: 0 10px 30px rgba(15, 26, 36, 0.12);
+      --stroke: rgba(15, 26, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      background: radial-gradient(1200px 600px at 15% 10%, #ffe7c2 0%, rgba(255, 231, 194, 0) 60%),
+                  radial-gradient(900px 500px at 90% 0%, #c7f3f2 0%, rgba(199, 243, 242, 0) 55%),
+                  var(--paper);
+      color: var(--ink);
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      width: min(1200px, 92vw);
+      margin: 32px auto 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 2.8vw, 3rem);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card h3 {
+      margin: 0 0 6px 0;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .stat-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .bar {
+      height: 8px;
+      background: #e8e2d8;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 18px 0 24px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      border: 1px solid var(--stroke);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .alert.success {
+      border-color: rgba(14, 165, 161, 0.4);
+      background: rgba(14, 165, 161, 0.1);
+      color: #0f766e;
+    }
+
+    .alert.error {
+      border-color: rgba(217, 119, 6, 0.4);
+      background: rgba(217, 119, 6, 0.1);
+      color: #b45309;
+    }
+
+    .toolbar form {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .toolbar input,
+    .toolbar select {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      padding: 9px 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--ink);
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(15, 26, 36, 0.18);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--stroke);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    thead {
+      background: #131e28;
+      color: #fff;
+    }
+
+    th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(15, 26, 36, 0.08);
+    }
+
+    tr:hover {
+      background-color: rgba(15, 26, 36, 0.04);
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .available {
+      color: #0f766e;
+      background: rgba(14, 165, 161, 0.15);
+    }
+
+    .lent {
+      color: #b45309;
+      background: rgba(217, 119, 6, 0.18);
+    }
+
+    .section-title {
+      margin: 28px 0 12px;
+      font-size: 1.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .request-status {
+      color: #0f766e;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .welcome {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar form {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+  <div class="hero">
+    <div>
+      <h1>Member Catalog</h1>
+      <p>Browse the library inventory, track lending status, and plan returns.</p>
+      <div class="welcome" th:if="${session.username}">
+        Welcome, <span th:text="${session.username}">member</span>.
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Total Books</h3>
+        <div class="stat-value" th:text="${totalBooks}">0</div>
+        <div class="stat-meta">Across all categories</div>
+      </div>
+      <div class="stat-card">
+        <h3>Available</h3>
+        <div class="stat-value" th:text="${availableCount}">0</div>
+        <div class="stat-meta" th:text="${availablePercent} + '% available'">0% available</div>
+        <div class="bar">
+          <div class="bar-fill" th:style="'width:' + ${availablePercent} + '%'"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Lent Out</h3>
+        <div class="stat-value" th:text="${lentCount}">0</div>
+        <div class="stat-meta" th:text="${lentPercent} + '% lent out'">0% lent out</div>
+        <div class="bar">
+          <div class="bar-fill" th:style="'width:' + ${lentPercent} + '%'"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <form th:action="@{/user/search}" method="get">
+      <input type="text" name="title" placeholder="Search by title" required />
+      <button type="submit" class="btn">Search</button>
+    </form>
+
+    <form th:action="@{/user/category}" method="get">
+      <select name="category">
+        <option value="">All Categories</option>
+        <option th:each="cat : ${categories}"
+                th:value="${cat}"
+                th:text="${cat}">
+        </option>
+      </select>
+      <button type="submit" class="btn ghost">Filter</button>
+    </form>
+
+    <form th:action="@{/user/available}" method="get">
+      <button type="submit" class="btn ghost">Available Books</button>
+    </form>
+
+    <form th:action="@{/user/lent}" method="get">
+      <button type="submit" class="btn ghost">Lent Books</button>
+    </form>
+
+    <form th:action="@{/user}" method="get">
+      <button type="submit" class="btn ghost">Reset</button>
+    </form>
+
+    <form th:action="@{/user/logout}" method="get">
+      <button type="submit" class="btn">Logout</button>
+    </form>
+  </div>
+
+  <div th:if="${message}" class="alert success" th:text="${message}"></div>
+  <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+  <div th:if="${#lists.size(requestedBooks) > 0}">
+    <div class="section-title">Requested Books</div>
+    <table>
+      <thead>
+      <tr>
+        <th>ISBN</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Requested At</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="requestItem : ${requestedBooks}">
+        <td th:text="${requestItem.book.isbn}"></td>
+        <td th:text="${requestItem.book.title}"></td>
+        <td th:text="${requestItem.book.category}"></td>
+        <td th:text="${#temporals.format(requestItem.requestedAt, 'dd MMM yyyy HH:mm')}"></td>
+        <td class="request-status" th:text="${requestItem.status}">PENDING</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">All Books</div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ISBN</th>
+      <th>Title</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>Lent By</th>
+      <th>Lent At</th>
+      <th>Expected Return</th>
+      <th>Request</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="book : ${books}"
+        th:with="record=${activeLendings[book.isbn]}">
+
+      <td th:text="${book.isbn}"></td>
+
+      <td th:text="${book.title}"></td>
+
+      <td th:text="${book.category}"></td>
+
+      <td>
+        <span th:if="${book.available}" class="pill available">Available</span>
+        <span th:unless="${book.available}" class="pill lent">Lent Out</span>
+      </td>
+
+      <td>
+        <span th:if="${record != null}" th:text="${record.member.name}">Member</span>
+        <span th:unless="${record != null}">-</span>
+      </td>
+
+      <td>
+        <span th:if="${record != null}"
+              th:text="${#temporals.format(record.lentDate, 'dd MMM yyyy HH:mm')}">-</span>
+        <span th:unless="${record != null}">-</span>
+      </td>
+
+      <td>
+        <span th:if="${expectedReturns[book.isbn] != null}"
+              th:text="${#temporals.format(expectedReturns[book.isbn], 'dd MMM yyyy HH:mm')}">-</span>
+        <span th:unless="${expectedReturns[book.isbn] != null}">-</span>
+      </td>
+
+      <td>
+        <form th:if="${book.available} and !${requestedIsbns.contains(book.isbn)}"
+              th:action="@{/user/request}"
+              method="post">
+          <input type="hidden" name="isbn" th:value="${book.isbn}" />
+          <button type="submit" class="btn">Request</button>
+        </form>
+        <span th:if="${book.available} and ${requestedIsbns.contains(book.isbn)}" class="request-status">Requested</span>
+        <span th:unless="${book.available}">-</span>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
